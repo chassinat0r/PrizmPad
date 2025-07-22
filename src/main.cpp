@@ -2,9 +2,14 @@
 #include <gint/keyboard.h>
 
 #include <types.h>
+#include <input.h>
 
-CharMode charMode = NUMBERS; // What type of character will be inputted
 Action action = NONE; // Whether the user is opening/saving a file, used to determine if popup is displayed and handling enter button
+
+char textbox[512]; // textbox will contain up to 512 characters early on, accounting for calculator's low memory
+int tbPos = 0; // where in the textbox the next character entered by the user will be added
+
+char c = '1'; // store last pressed character to test user input
 
 /* Handle input function 
 Responsible for handling all user input
@@ -35,18 +40,25 @@ void handleInput() {
 			}
 			case KEY_F5: { // if F5 key pressed (change character type 1-a-A)
 				// change character type
-				if (charMode == NUMBERS) {
-					charMode = LETTERS_LOWER;
-				} else if (charMode == LETTERS_LOWER) {
-					charMode = LETTERS_UPPER;
-				} else if (charMode == LETTERS_UPPER) {
-					charMode = NUMBERS;
+				CharMode mode = Input::getMode(); // get current input mode
+				if (mode == NUMBERS) {
+					Input::setMode(LETTERS_LOWER);
+				} else if (mode == LETTERS_LOWER) {
+					Input::setMode(LETTERS_UPPER);
+				} else if (mode == LETTERS_UPPER) {
+					Input::setMode(NUMBERS);
 				}
 				break;
 			}
 			case KEY_MENU: { // if menu key pressed (go back to calculator main menu)
 				getkey();
 				break;
+			}
+			default: { // some other key pressed
+				char d = Input::getChar(e.key); // get the corresponding character
+				if (d != -1) { // if key is supported
+					c = d; // set last pressed character to the corresponding character to the key
+				}
 			}
 		}
 	}
@@ -66,7 +78,8 @@ Responsible for drawing to the screen every frame update
 
 void draw() {
 	dclear(C_WHITE); // Fill the screen buffer with white
-	dtext(1, 1, C_BLACK, "Sample fxSDK add-in."); // Display sample text 
+	char fmt[1] = {c};
+	dtext(1, 1, C_BLACK, fmt); // Display last pressed character
 	dupdate(); // Write the buffer to the display
 }
 
