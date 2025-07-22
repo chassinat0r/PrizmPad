@@ -58,5 +58,5 @@ int Input::getKeyIndex(uint key) {
 		}
 		index++; // otherwise iterate and try again
 	}
-	return -1; // if key not supported return -1
+	return '\0'; // if key not supported return empty character
 }

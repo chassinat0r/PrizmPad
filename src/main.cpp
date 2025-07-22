@@ -9,8 +9,6 @@ Action action = NONE; // Whether the user is opening/saving a file, used to dete
 char textbox[512]; // textbox will contain up to 512 characters early on, accounting for calculator's low memory
 int tbPos = 0; // where in the textbox the next character entered by the user will be added
 
-char c = '1'; // store last pressed character to test user input
-
 /* Handle input function 
 Responsible for handling all user input
 */
@@ -54,11 +52,20 @@ void handleInput() {
 				getkey();
 				break;
 			}
-			default: { // some other key pressed
-				char d = Input::getChar(e.key); // get the corresponding character
-				if (d != -1) { // if key is supported
-					c = d; // set last pressed character to the corresponding character to the key
+			case KEY_DEL: { // if delete key pressed, delete the last character
+				if (tbPos > 0) { // check if there are any characters to delete
+					textbox[tbPos-1] = '\0'; // set character at position before to empty
+					tbPos--; // decrement position
 				}
+				break;
+			}
+			default: { // some other key pressed
+				char c = Input::getChar(e.key); // get the corresponding character
+				if (c != '\0') { // if key is supported
+					textbox[tbPos] = c; // add character to textbox
+					tbPos++; // increment position
+				}
+				break;
 			}
 		}
 	}
@@ -78,8 +85,30 @@ Responsible for drawing to the screen every frame update
 
 void draw() {
 	dclear(C_WHITE); // Fill the screen buffer with white
-	char fmt[1] = {c};
-	dtext(1, 1, C_BLACK, fmt); // Display last pressed character
+
+	/* Keep track of row and column of each characrer
+	 This is because dtext does not account for text going off the screen or
+	 newline ('\n') characters
+	*/
+
+	int row = 0;
+	int column = 0;
+
+	for (auto c : textbox) { // Iterate through each character in textbox
+		if (c != '\n' && c != '\0') { // If character is not a newline or empty
+			char fmt[1] = {c}; // put character in an array as that is the format dtext allows
+			dtext(column*8, row*9, C_BLACK, fmt); // display character at position relative to row and column
+		}
+
+		column++; // increase column for next character
+
+		if (column*8 > 388 || c == '\n') { // if character a newline or the next character's position would exceed the width of the screen
+			row++; // increment row
+			column = 0; // reset column to 0
+		}
+
+	}
+
 	dupdate(); // Write the buffer to the display
 }
 
