@@ -3,11 +3,14 @@
 
 #include <types.h>
 #include <input.h>
+#include <button.h>
 
 Action action = NONE; // Whether the user is opening/saving a file, used to determine if popup is displayed and handling enter button
 
 char textbox[512]; // textbox will contain up to 512 characters early on, accounting for calculator's low memory
 int tbPos = 0; // where in the textbox the next character entered by the user will be added
+
+Button testButton;
 
 /* Handle input function 
 Responsible for handling all user input
@@ -54,7 +57,7 @@ void handleInput() {
 			}
 			case KEY_DEL: { // if delete key pressed, delete the last character
 				if (tbPos > 0) { // check if there are any characters to delete
-					textbox[tbPos-1] = '\0'; // set character at position before to empty
+					textbox[tbPos-1] = '\0'; // set character at position before to null
 					tbPos--; // decrement position
 				}
 				break;
@@ -95,7 +98,7 @@ void draw() {
 	int column = 0;
 
 	for (auto c : textbox) { // Iterate through each character in textbox
-		if (c != '\n' && c != '\0') { // If character is not a newline or empty
+		if (c != '\n' && c != '\0') { // If character is not a newline or null
 			char fmt[1] = {c}; // put character in an array as that is the format dtext allows
 			dtext(column*8, row*9, C_BLACK, fmt); // display character at position relative to row and column
 		}
@@ -109,11 +112,14 @@ void draw() {
 
 	}
 
+	testButton.draw();
+
 	dupdate(); // Write the buffer to the display
 }
 
 int main(void)
 {
+	testButton = Button(2, 2, "Test", 4);
 	// Update loop, repeat indefinitely
 	while (true) {
 		handleInput(); // Handle input first as input affects what will be displayed
