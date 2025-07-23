@@ -1,16 +1,25 @@
 #ifndef BUTTON_H
 #define BUTTON_H
 
+/* Button class
+Allows the creation of buttons with text and drawing at a given position on 
+the screen
+Used for displaying the file management options (new, open, save, etc)
+*/
+
 class Button {
     public:
         Button();
         Button(int x, int y, char *label, int labelSize);
 
         void draw();
+
+        // Getter functions
         int getWidth();
         int getHeight();
 
     private:
+        // Properties of the button
         int x;
         int y;
         char label[50];
