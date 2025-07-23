@@ -16,7 +16,7 @@ CharMode Input::getMode() { return mode; }
 Many keys are attributed to more than one character (e.g. the 1 key can be 1, u, or U)
 so use the character mode to determine
 If the key is not supported (e.g. VARS is not attributed to any character) then return
--1 for the main code to handle
+the NULL character for the main code to handle
 */
 
 char Input::getChar(uint KEY) {
@@ -32,7 +32,7 @@ char Input::getChar(uint KEY) {
         }
     }
 
-    return -1; // if the key entered is not supported
+    return '\0'; // if the key entered is not supported, return NULL character
 
 }
 
@@ -58,5 +58,5 @@ int Input::getKeyIndex(uint key) {
 		}
 		index++; // otherwise iterate and try again
 	}
-	return '\0'; // if key not supported return empty character
+	return -1; // if key not supported return -1
 }
