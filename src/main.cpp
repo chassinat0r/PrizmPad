@@ -9,8 +9,12 @@ Action action = NONE; // Whether the user is opening/saving a file, used to dete
 
 char textbox[512]; // textbox will contain up to 512 characters early on, accounting for calculator's low memory
 int tbPos = 0; // where in the textbox the next character entered by the user will be added
-
-Button testButton;
+char inputModeStr[10] = "F5:Mode 1";
+Button newButton;
+Button openButton;
+Button saveButton;
+Button saveAsButton;
+Button inputModeButton;
 
 /* Handle input function 
 Responsible for handling all user input
@@ -79,7 +83,17 @@ void handleInput() {
 */
 
 void update() {
+	CharMode mode = Input::getMode();
+	if (mode == NUMBERS) {
+		inputModeStr[8] = '1';
+	} else if (mode == LETTERS_LOWER) {
+		inputModeStr[8] = 'a';
+	} else if (mode == LETTERS_UPPER) {
+		inputModeStr[8] = 'A';
+	}
 
+
+	inputModeButton.setLabel(inputModeStr, 10);
 }
 
 /* Draw function
@@ -97,34 +111,49 @@ void draw() {
 	int row = 0;
 	int column = 0;
 
+	int offsetX = newButton.getX();
+	int offsetY = newButton.getY() + newButton.getHeight() + 4;
+
 	for (auto c : textbox) { // Iterate through each character in textbox
 		if (c != '\n' && c != '\0') { // If character is not a newline or null
 			char fmt[1] = {c}; // put character in an array as that is the format dtext allows
-			dtext(column*8, row*9, C_BLACK, fmt); // display character at position relative to row and column
+			dtext(offsetX + column*9, offsetY + row*10, C_BLACK, fmt); // display character at position relative to row and column
 		}
 
 		column++; // increase column for next character
 
-		if (column*8 > 388 || c == '\n') { // if character a newline or the next character's position would exceed the width of the screen
+		if (offsetX + column*9 > 388 || c == '\n') { // if character a newline or the next character's position would exceed the width of the screen
 			row++; // increment row
 			column = 0; // reset column to 0
 		}
 
 	}
 
-	testButton.draw();
+	// Draw menu buttons
+	newButton.draw();
+	openButton.draw();
+	saveButton.draw();
+	saveAsButton.draw();
+	inputModeButton.draw();
 
 	dupdate(); // Write the buffer to the display
 }
 
 int main(void)
 {
-	testButton = Button(2, 2, "Test", 4);
+	// Setup menu buttons
+	newButton = Button(2, 2, "F1:New", 6);
+	openButton = Button(newButton.getX() + newButton.getWidth() + 2, 2, "F2:Open", 7);
+	saveButton = Button(openButton.getX() + openButton.getWidth() + 2, 2, "F3:Save", 7);
+	saveAsButton = Button(saveButton.getX() + saveButton.getWidth() + 2, 2, "F4:Save As", 10);
+	inputModeButton = Button(saveAsButton.getX() + saveAsButton.getWidth() + 2, 2, inputModeStr, 10);
+	
 	// Update loop, repeat indefinitely
 	while (true) {
 		handleInput(); // Handle input first as input affects what will be displayed
 		update();
 		draw(); // Draw last to account for user input (e.g. entering text or open/saving)
 	}
+
 	return 1;
 }

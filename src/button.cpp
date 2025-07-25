@@ -42,8 +42,24 @@ void Button::draw() {
 
 /* Getter functions for width and height
 Return width or height if necessary for calculating space between buttons
+Return X and Y which can be used for determining where text content is displayed
+or the positioning of the next button.
 */
 
 int Button::getWidth() { return width; }
 
 int Button::getHeight() { return height; }
+
+int Button::getX() { return x; }
+
+int Button::getY() { return y; }
+
+/* Setter function for setting label of a button
+*/
+
+void Button::setLabel(char *label, int labelSize) {
+    strEmpty(this->label, labelSize);
+    for (int i = 0; i < labelSize; i++) {
+        this->label[i] = label[i];
+    }
+}

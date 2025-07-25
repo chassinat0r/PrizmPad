@@ -17,6 +17,11 @@ class Button {
         // Getter functions
         int getWidth();
         int getHeight();
+        int getX();
+        int getY();
+
+        // Setter functions
+        void setLabel(char *label, int labelSize);
 
     private:
         // Properties of the button
@@ -24,7 +29,6 @@ class Button {
         int y;
         char label[50];
         int labelLen;
-
         int width;
         int height = 11;
 };
